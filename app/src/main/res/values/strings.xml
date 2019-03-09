@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">foodyofme</string>
+
+    <!-- content description image -->
+    <string name="cdi_logo">logo</string>
+    
+    <!-- label text view -->
+    <string name="label_version_name">Version %1$s</string>
+    <string name="label_loading">Loading…</string>
+    <string name="label_company_name">nguyendinhdoan.io</string>
+
+    <!-- label button -->
+
+    <!-- hint edit text -->
+
 </resources>

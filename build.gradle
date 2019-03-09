@@ -15,10 +15,13 @@ buildscript {
     }
 }
 
+
 ext {
     // version library project
     firebaseCoreVersion = '16.0.7'
+    firebaseDatabaseVersion = '16.1.0'
     googleSupportVersion = '28.0.0'
+    butterKnifeVersion = '8.8.1'
 }
 
 allprojects {
