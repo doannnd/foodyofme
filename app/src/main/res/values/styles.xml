@@ -1,5 +1,8 @@
 <resources>
 
-
+<style name="TextAppearance.App.TextInputLayout" parent="Widget.Design.TextInputLayout">
+    <item name="android:textSize">14sp</item>
+    <item name="android:textColor">@color/colorGray</item>
+</style>
 
 </resources>

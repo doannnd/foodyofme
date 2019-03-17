@@ -7,10 +7,15 @@
     <!-- label text view -->
     <string name="label_version_name">Version %1$s</string>
     <string name="label_loading">Loading…</string>
-    <string name="label_company_name">nguyendinhdoan.io</string>
 
     <!-- label button -->
+    <string name="title_login">Sign In</string>
+    <string name="title_login_facebook">Facebook</string>
+    <string name="title_login_google">Google</string>
+    <string name="title_start_register">Don\'t have a account ? <u>Sign up here</u></string>
 
     <!-- hint edit text -->
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
 
 </resources>

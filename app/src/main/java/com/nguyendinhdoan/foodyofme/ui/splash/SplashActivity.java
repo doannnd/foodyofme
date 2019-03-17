@@ -1,18 +1,24 @@
 package com.nguyendinhdoan.foodyofme.ui.splash;
 
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import com.nguyendinhdoan.foodyofme.R;
+import com.nguyendinhdoan.foodyofme.ui.base.BaseActivity;
+import com.nguyendinhdoan.foodyofme.ui.login.LoginActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SplashActivity extends AppCompatActivity {
+public class SplashActivity extends BaseActivity {
+
+    public static final long SPLASH_SCREEN_TIME_OUT = 2000;
 
     @BindView(R.id.activity_splash_tv_version_name)
     TextView tvVersionName;
@@ -23,13 +29,29 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash);
         ButterKnife.bind(this);
 
-        getVersionName();
+        getActivityComponent().inject(this);
+        setupUi();
     }
 
-    /**
-     * get version name and display on ui
-     */
-    private void getVersionName() {
+    @Override
+    public void setupUi() {
+        getPackageVersionName();
+        launchLoginActivity();
+    }
+
+    private void launchLoginActivity() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intentLoginActivity = new Intent(SplashActivity.this, LoginActivity.class);
+                intentLoginActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intentLoginActivity);
+                finish();
+            }
+        }, SPLASH_SCREEN_TIME_OUT);
+    }
+
+    private void getPackageVersionName() {
         try {
             PackageManager packageManager = getApplicationContext().getPackageManager();
             PackageInfo packageInfo = packageManager.getPackageInfo(getApplicationContext().getPackageName(), 0);
@@ -38,6 +60,4 @@ public class SplashActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
-
 }
