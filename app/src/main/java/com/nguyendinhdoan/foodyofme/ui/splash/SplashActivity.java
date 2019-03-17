@@ -16,7 +16,7 @@ import com.nguyendinhdoan.foodyofme.ui.login.LoginActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SplashActivity extends BaseActivity {
+public class SplashActivity extends BaseActivity implements SplashToView{
 
     public static final long SPLASH_SCREEN_TIME_OUT = 2000;
 
@@ -27,8 +27,8 @@ public class SplashActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        ButterKnife.bind(this);
 
+        setUnbinder( ButterKnife.bind(this));
         getActivityComponent().inject(this);
         setupUi();
     }
@@ -39,11 +39,12 @@ public class SplashActivity extends BaseActivity {
         launchLoginActivity();
     }
 
-    private void launchLoginActivity() {
+    @Override
+    public void launchLoginActivity() {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent intentLoginActivity = new Intent(SplashActivity.this, LoginActivity.class);
+                Intent intentLoginActivity = LoginActivity.getStartIntent(SplashActivity.this);
                 intentLoginActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intentLoginActivity);
                 finish();
@@ -51,7 +52,8 @@ public class SplashActivity extends BaseActivity {
         }, SPLASH_SCREEN_TIME_OUT);
     }
 
-    private void getPackageVersionName() {
+    @Override
+    public void getPackageVersionName() {
         try {
             PackageManager packageManager = getApplicationContext().getPackageManager();
             PackageInfo packageInfo = packageManager.getPackageInfo(getApplicationContext().getPackageName(), 0);

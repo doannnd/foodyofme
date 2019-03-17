@@ -2,9 +2,12 @@ package com.nguyendinhdoan.foodyofme.ui.login;
 
 import android.app.Activity;
 
+import com.nguyendinhdoan.foodyofme.ui.base.BaseView;
+import com.nguyendinhdoan.foodyofme.ui.base.ToPresenter;
+
 public interface LoginContract {
 
-    interface LoginToView {
+    interface LoginToView extends BaseView {
         void showLoading();
 
         void hideLoading();
@@ -14,7 +17,7 @@ public interface LoginContract {
         void onLoginFailed(String message);
     }
 
-    interface LoginToPresenter {
+    interface LoginToPresenter<V extends BaseView> extends ToPresenter<V> {
         void loginByEmailAndPassword(Activity activity, String email, String password);
     }
 

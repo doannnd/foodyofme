@@ -1,19 +1,22 @@
 package com.nguyendinhdoan.foodyofme.ui.login;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 
 import com.nguyendinhdoan.foodyofme.R;
 import com.nguyendinhdoan.foodyofme.ui.base.BaseActivity;
 import com.nguyendinhdoan.foodyofme.ui.register.RegisterActivity;
+import com.nguyendinhdoan.foodyofme.ui.splash.SplashActivity;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.Objects;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,14 +32,25 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginTo
     TextInputEditText etPassword;
     @BindView(R.id.layout_password)
     TextInputLayout layoutPassword;
+    @BindView(R.id.avl_loading)
+    AVLoadingIndicatorView avlLoading;
+
+    @Inject
+    LoginContract.LoginToPresenter<LoginContract.LoginToView> loginPresenter;
+
+    public static Intent getStartIntent(Context context) {
+        return new Intent(context, LoginActivity.class);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        ButterKnife.bind(this);
 
+        setUnbinder(ButterKnife.bind(this));
         getActivityComponent().inject(this);
+        loginPresenter.attachView(this);
+
         setupUi();
     }
 
@@ -45,52 +59,39 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginTo
 
     }
 
-    @OnClick({R.id.btn_login, R.id.btn_login_facebook, R.id.btn_login_google, R.id.btn_start_register})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.btn_login:
-                handleLogin();
-                break;
-            case R.id.btn_login_facebook:
-                handleLoginFacebook();
-                break;
-            case R.id.btn_login_google:
-                handleLoginGoogle();
-                break;
-            case R.id.btn_start_register:
-                launchRegisterActivity();
-                break;
-        }
-    }
-
-    private void handleLogin() {
+    @OnClick(R.id.btn_login)
+     void handleLogin() {
         String email = Objects.requireNonNull(etEmail.getText()).toString();
         String password = Objects.requireNonNull(etPassword.getText()).toString();
+        loginPresenter.loginByEmailAndPassword(this, email, password);
     }
 
-    private void launchRegisterActivity() {
+    @OnClick(R.id.btn_start_register)
+    void launchRegisterActivity() {
         Intent intentRegisterActivity = new Intent(this, RegisterActivity.class);
         intentRegisterActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intentRegisterActivity);
         finish();
     }
 
-    private void handleLoginFacebook() {
+    @OnClick(R.id.btn_login_facebook)
+    void handleLoginFacebook() {
 
     }
 
+    @OnClick(R.id.btn_login_google)
     private void handleLoginGoogle() {
 
     }
 
     @Override
     public void showLoading() {
-
+        avlLoading.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideLoading() {
-
+        avlLoading.setVisibility(View.GONE);
     }
 
     @Override
@@ -101,5 +102,11 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginTo
     @Override
     public void onLoginFailed(String message) {
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        loginPresenter.detachView();
+        super.onDestroy();
     }
 }
