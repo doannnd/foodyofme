@@ -1,15 +1,21 @@
 package com.nguyendinhdoan.foodyofme.ui.login;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.view.View;
+import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.nguyendinhdoan.foodyofme.R;
 import com.nguyendinhdoan.foodyofme.ui.base.BaseActivity;
+import com.nguyendinhdoan.foodyofme.ui.main.MainActivity;
 import com.nguyendinhdoan.foodyofme.ui.register.RegisterActivity;
 import com.nguyendinhdoan.foodyofme.ui.splash.SplashActivity;
 import com.wang.avi.AVLoadingIndicatorView;
@@ -22,7 +28,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class LoginActivity extends BaseActivity implements LoginContract.LoginToView {
+public class LoginActivity extends BaseActivity implements LoginToView {
 
     @BindView(R.id.et_email)
     TextInputEditText etEmail;
@@ -36,7 +42,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginTo
     AVLoadingIndicatorView avlLoading;
 
     @Inject
-    LoginContract.LoginToPresenter<LoginContract.LoginToView> loginPresenter;
+    LoginPresenter loginPresenter;
 
     public static Intent getStartIntent(Context context) {
         return new Intent(context, LoginActivity.class);
@@ -47,11 +53,15 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginTo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        setUnbinder(ButterKnife.bind(this));
         getActivityComponent().inject(this);
+        setUnbinder(ButterKnife.bind(this));
         loginPresenter.attachView(this);
+    }
 
-        setupUi();
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //loginPresenter.isLoggedIn();
     }
 
     @Override
@@ -63,7 +73,7 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginTo
      void handleLogin() {
         String email = Objects.requireNonNull(etEmail.getText()).toString();
         String password = Objects.requireNonNull(etPassword.getText()).toString();
-        loginPresenter.loginByEmailAndPassword(this, email, password);
+        loginPresenter.performLoginWithEmailAndPassword(email, password);
     }
 
     @OnClick(R.id.btn_start_register)
@@ -76,12 +86,23 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginTo
 
     @OnClick(R.id.btn_login_facebook)
     void handleLoginFacebook() {
-
+        loginPresenter.performLoginWithFacebook(this);
     }
 
     @OnClick(R.id.btn_login_google)
-    private void handleLoginGoogle() {
+     void handleLoginGoogle() { loginPresenter.performLoginWithGoogle(this);
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        loginPresenter.handleActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onDestroy() {
+        loginPresenter.detachView();
+        super.onDestroy();
     }
 
     @Override
@@ -96,17 +117,25 @@ public class LoginActivity extends BaseActivity implements LoginContract.LoginTo
 
     @Override
     public void onLoginSuccess(boolean isLoginSuccess) {
+        if (isLoginSuccess) {
+            launchMainActivity();
+        }
+    }
 
+    @Override
+    public void onError(@StringRes  int resId) {
+        showSnackBar(getString(resId));
     }
 
     @Override
     public void onLoginFailed(String message) {
-
+        showSnackBar(message);
     }
 
     @Override
-    protected void onDestroy() {
-        loginPresenter.detachView();
-        super.onDestroy();
+    public void onLoggedIn(boolean isLoggedIn) {
+        if (isLoggedIn) {
+            launchMainActivity();
+        }
     }
 }

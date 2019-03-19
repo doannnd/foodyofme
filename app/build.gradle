@@ -36,6 +36,7 @@ dependencies {
 
     // google play services
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
+    implementation 'com.facebook.android:facebook-login:[4,5)'
 
     // butter knife
     implementation "com.jakewharton:butterknife:$rootProject.butterKnifeVersion"
