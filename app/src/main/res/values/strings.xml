@@ -28,6 +28,7 @@
     <string name="error_login">Login failed</string>
     <string name="error_empty_email">Email is empty</string>
     <string name="error_empty_password">Password id empty</string>
+    <string name="error_confirm_password">Password doesn\'t confirm password</string>
     
     <!--dialog-->
     <string name="dialog_title">Notification</string>
@@ -36,6 +37,15 @@
     <!--facebook login-->
     <string name="facebook_app_id">828116660869575</string>
     <string name="fb_login_protocol_scheme">fb828116660869575</string>
+
+    <!--toolbar-->
+    <string name="menu_places">Places</string>
+    <string name="menu_food">Food</string>
+    <string name="menu_latest">Latest</string>
+    <string name="menu_category">Category</string>
+    <string name="menu_city">HCM City</string>
+    <string name="menu_add">Add</string>
+    
 
 
 </resources>

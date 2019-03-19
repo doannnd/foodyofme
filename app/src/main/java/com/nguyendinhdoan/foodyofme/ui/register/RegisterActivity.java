@@ -5,10 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.EditText;
 
 import com.nguyendinhdoan.foodyofme.R;
 import com.nguyendinhdoan.foodyofme.ui.base.BaseActivity;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import javax.inject.Inject;
 
@@ -24,9 +26,11 @@ public class RegisterActivity extends BaseActivity implements RegisterToView{
     EditText etPassword;
     @BindView(R.id.et_confirm_password)
     EditText etConfirmPassword;
+    @BindView(R.id.avl_loading)
+    AVLoadingIndicatorView alvLoading;
 
     @Inject
-    RegisterToPresenter registerPresenter;
+    RegisterPresenter registerPresenter;
 
     public static Intent getStartIntent(Context context) {
         return new Intent(context, RegisterActivity.class);
@@ -44,15 +48,15 @@ public class RegisterActivity extends BaseActivity implements RegisterToView{
 
     @OnClick(R.id.btn_register)
     void handleRegister() {
-        launchLoginActivity();
+        String email = etEmail.getText().toString();
+        String password = etPassword.getText().toString();
+        String confirmPassword = etConfirmPassword.getText().toString();
+        registerPresenter.performRegisterByEmailAndPassword(email, password, confirmPassword);
     }
 
     @OnClick(R.id.btn_start_login)
     void handleStartLogin() {
-        String email = etEmail.getText().toString();
-        String password = etPassword.getText().toString();
-        String confirmPassword = etConfirmPassword.getText().toString();
-
+        launchLoginActivity();
     }
 
     @Override
@@ -62,27 +66,27 @@ public class RegisterActivity extends BaseActivity implements RegisterToView{
 
     @Override
     public void showLoading() {
-
+        alvLoading.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideLoading() {
-
+        alvLoading.setVisibility(View.GONE);
     }
 
     @Override
     public void onError(int resId) {
-
+        showSnackBar(getString(resId));
     }
 
     @Override
     public void onRegisterSuccess(boolean isRegisterSuccess) {
-
+        launchMainActivity();
     }
 
     @Override
     public void onRegisterFailed(String message) {
-
+        showSnackBar(message);
     }
 
     @Override
