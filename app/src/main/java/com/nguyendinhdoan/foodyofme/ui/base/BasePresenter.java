@@ -1,28 +1,36 @@
 package com.nguyendinhdoan.foodyofme.ui.base;
 
-public class BasePresenter<V extends BaseView> implements ToPresenter<V> {
+import android.view.View;
 
-    private V view;
+public class BasePresenter<V extends BaseToView> implements BaseToPresenter<V> {
+
+    private V mView;
 
     @Override
-    public void attachView(V view) {
-        this.view = view;
+    public void onAttach(V view) {
+        this.mView = view;
     }
 
     @Override
-    public void detachView() {
-        this.view = null;
+    public void onDetach() {
+        this.mView = null;
     }
 
-    public V getView() {
-        return this.view;
+    public V getmView() {
+        return this.mView;
     }
 
     public boolean isViewAttached() {
-        return this.view != null;
+        return this.mView != null;
     }
 
     public void checkViewAttached() {
-        if(!isViewAttached()) throw new ViewNotAttachedException();
+        if (!isViewAttached()) throw new ViewNotAttachedException();
+    }
+
+    public static class ViewNotAttachedException extends RuntimeException {
+        public ViewNotAttachedException() {
+            super("Please call attach before request data to the presenter");
+        }
     }
 }

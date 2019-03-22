@@ -9,63 +9,55 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.nguyendinhdoan.foodyofme.R;
 import com.nguyendinhdoan.foodyofme.ui.base.BasePresenter;
-import com.nguyendinhdoan.foodyofme.ui.login.LoginToView;
 import com.nguyendinhdoan.foodyofme.util.CommonUtils;
 
 import java.util.Objects;
 
-import javax.inject.Inject;
-
-public class RegisterPresenter extends BasePresenter<RegisterToView> implements RegisterToPresenter {
+public class RegisterPresenter<V extends RegisterToView> extends BasePresenter<V> implements RegisterToPresenter<V> {
 
     private static final String TAG = "RegisterPresenter";
-    private FirebaseAuth firebaseAuth;
-
-    @Inject
-    public RegisterPresenter(FirebaseAuth firebaseAuth) {
-        this.firebaseAuth = firebaseAuth;
-    }
 
     @Override
-    public void performRegisterByEmailAndPassword(String email, String password, String confirmPassword) {
+    public void performRegisterByEmailAndPassword(String email, final String password, String confirmPassword) {
 
         if (email == null || email.isEmpty()) {
-            getView().onError(R.string.error_empty_email);
+            getmView().onError(R.string.error_empty_email);
             return;
         }
 
         if (password == null || password.isEmpty()) {
-            getView().onError(R.string.error_empty_password);
+            getmView().onError(R.string.error_empty_password);
             return;
         }
 
         if (!password.equals(confirmPassword)) {
-            getView().onError(R.string.error_confirm_password);
+            getmView().onError(R.string.error_confirm_password);
             return;
         }
 
         if (!CommonUtils.validateEmail(email)) {
-            getView().onError(R.string.error_email);
+            getmView().onError(R.string.error_email);
             return;
         }
 
         if (!CommonUtils.validatePassword(password)) {
-            getView().onError(R.string.error_password);
+            getmView().onError(R.string.error_password);
             return;
         }
 
-        getView().showLoading();
-        firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+        getmView().showLoading();
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    getView().onRegisterSuccess(true);
+                    getmView().onRegisterSuccess(true);
                 } else {
                     Log.w(TAG, "Register failed: " + task.getException() );
-                    getView().onRegisterFailed(Objects.requireNonNull(task.getException()).getMessage());
+                    getmView().onRegisterFailed(Objects.requireNonNull(task.getException()).getMessage());
                 }
-                getView().hideLoading();
+                getmView().hideLoading();
             }
         });
     }
+
 }

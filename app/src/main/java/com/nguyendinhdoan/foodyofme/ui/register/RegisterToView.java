@@ -2,9 +2,9 @@ package com.nguyendinhdoan.foodyofme.ui.register;
 
 import android.support.annotation.StringRes;
 
-import com.nguyendinhdoan.foodyofme.ui.base.BaseView;
+import com.nguyendinhdoan.foodyofme.ui.base.BaseToView;
 
-public interface RegisterToView extends BaseView {
+public interface RegisterToView extends BaseToView {
 
     void showLoading();
 

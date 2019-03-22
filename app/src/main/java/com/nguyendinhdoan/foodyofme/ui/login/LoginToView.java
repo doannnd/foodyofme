@@ -2,9 +2,9 @@ package com.nguyendinhdoan.foodyofme.ui.login;
 
 import android.support.annotation.StringRes;
 
-import com.nguyendinhdoan.foodyofme.ui.base.BaseView;
+import com.nguyendinhdoan.foodyofme.ui.base.BaseToView;
 
-public interface LoginToView extends BaseView {
+public interface LoginToView extends BaseToView {
 
     void showLoading();
 

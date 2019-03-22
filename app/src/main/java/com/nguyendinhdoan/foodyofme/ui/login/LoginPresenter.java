@@ -2,11 +2,9 @@ package com.nguyendinhdoan.foodyofme.ui.login;
 
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -36,62 +34,57 @@ import java.util.Objects;
 
 import javax.inject.Inject;
 
-public class LoginPresenter extends BasePresenter<LoginToView> implements LoginToPresenter{
+public class LoginPresenter<V extends LoginToView> extends BasePresenter<V> implements LoginToPresenter<V> {
 
     private static final String TAG = "LoginPresenter";
     private static final int RC_SIGN_IN = 9001;
-    private FirebaseAuth mFirebaseAuth;
-    private CallbackManager callbackManager = CallbackManager.Factory.create();
 
-    @Inject
-    public LoginPresenter(FirebaseAuth firebaseAuth) {
-        this.mFirebaseAuth = firebaseAuth;
-    }
+    private CallbackManager mCallbackManager;
 
     @Override
     public void performLoginWithEmailAndPassword(String email, String password) {
 
         if (email == null || email.isEmpty()) {
-            getView().onError(R.string.error_empty_email);
+            getmView().onError(R.string.error_empty_email);
             return;
         }
 
         if (password == null || password.isEmpty()) {
-            getView().onError(R.string.error_empty_password);
+            getmView().onError(R.string.error_empty_password);
             return;
         }
 
         if (!CommonUtils.validateEmail(email)) {
-            getView().onError(R.string.error_email);
+            getmView().onError(R.string.error_email);
             return;
         }
 
         if (!CommonUtils.validatePassword(password)) {
-            getView().onError(R.string.error_password);
+            getmView().onError(R.string.error_password);
             return;
         }
 
-        getView().showLoading();
-        mFirebaseAuth.signInWithEmailAndPassword(email, password)
+        getmView().showLoading();
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    getView().onLoginSuccess(true);
+                    getmView().onLoginSuccess(true);
                 } else {
                     Log.w(TAG, "Login failed: " + Objects.requireNonNull(task.getException()).getMessage());
-                    getView().onLoginFailed(Objects.requireNonNull(task.getException()).getMessage());
+                    getmView().onLoginFailed(Objects.requireNonNull(task.getException()).getMessage());
                 }
-                getView().hideLoading();
+                getmView().hideLoading();
             }
         });
     }
 
     @Override
     public void isLoggedIn() {
-        FirebaseUser user = mFirebaseAuth.getCurrentUser();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
-            getView().onLoggedIn(true);
+            getmView().onLoggedIn(true);
         }
     }
 
@@ -119,35 +112,35 @@ public class LoginPresenter extends BasePresenter<LoginToView> implements LoginT
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
                 Log.w(TAG, "Google sign in failed", e);
-                getView().onLoginFailed(e.getMessage());
             }
         } else {
-            callbackManager.onActivityResult(requestCode, resultCode, data);
+            mCallbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
-        getView().showLoading();
-
+        getmView().showLoading();
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
-        mFirebaseAuth.signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+        FirebaseAuth.getInstance().signInWithCredential(credential).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    getView().onLoginSuccess(true);
+                    getmView().onLoginSuccess(true);
                 }  else {
                     Log.w(TAG, "Sign in with google failed: " + task.getException());
-                    getView().onLoginFailed(Objects.requireNonNull(task.getException()).getMessage());
+                    getmView().onLoginFailed(Objects.requireNonNull(task.getException()).getMessage());
                 }
+                getmView().hideLoading();
             }
         });
     }
 
     @Override
     public void performLoginWithFacebook(Activity activity) {
+        mCallbackManager = CallbackManager.Factory.create();
         LoginManager.getInstance().logInWithReadPermissions(activity, Arrays.asList("public_profile"));
-        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+        LoginManager.getInstance().registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.d(TAG, "facebook:onSuccess:" + loginResult);
@@ -168,21 +161,22 @@ public class LoginPresenter extends BasePresenter<LoginToView> implements LoginT
 
     private void handleFacebookAccessToken(AccessToken token) {
         Log.d(TAG, "handleFacebookAccessToken:" + token);
-        getView().showLoading();
+
+        getmView().showLoading();
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        mFirebaseAuth.signInWithCredential(credential)
+        FirebaseAuth.getInstance().signInWithCredential(credential)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Log.d(TAG, "signInWithCredential:success");
-                            getView().onLoginSuccess(true);
+                            getmView().onLoginSuccess(true);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
-                            getView().onLoginFailed(Objects.requireNonNull(task.getException()).getMessage());
+                            getmView().onLoginFailed(Objects.requireNonNull(task.getException()).getMessage());
                         }
-                        getView().hideLoading();
+                        getmView().hideLoading();
                     }
                 });
     }

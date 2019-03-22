@@ -10,6 +10,8 @@ import android.widget.EditText;
 
 import com.nguyendinhdoan.foodyofme.R;
 import com.nguyendinhdoan.foodyofme.ui.base.BaseActivity;
+import com.nguyendinhdoan.foodyofme.ui.login.LoginActivity;
+import com.nguyendinhdoan.foodyofme.ui.main.MainActivity;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import javax.inject.Inject;
@@ -29,8 +31,7 @@ public class RegisterActivity extends BaseActivity implements RegisterToView{
     @BindView(R.id.avl_loading)
     AVLoadingIndicatorView alvLoading;
 
-    @Inject
-    RegisterPresenter registerPresenter;
+    RegisterToPresenter<RegisterToView> registerPresenter;
 
     public static Intent getStartIntent(Context context) {
         return new Intent(context, RegisterActivity.class);
@@ -41,9 +42,9 @@ public class RegisterActivity extends BaseActivity implements RegisterToView{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        getActivityComponent().inject(this);
         setUnbinder(ButterKnife.bind(this));
-        registerPresenter.attachView(this);
+        registerPresenter.onAttach(this);
+        registerPresenter = new RegisterPresenter<>();
     }
 
     @OnClick(R.id.btn_register)
@@ -59,10 +60,6 @@ public class RegisterActivity extends BaseActivity implements RegisterToView{
         launchLoginActivity();
     }
 
-    @Override
-    public void setupUi() {
-
-    }
 
     @Override
     public void showLoading() {
@@ -91,7 +88,26 @@ public class RegisterActivity extends BaseActivity implements RegisterToView{
 
     @Override
     protected void onDestroy() {
-        registerPresenter.detachView();
+        registerPresenter.onDetach();
         super.onDestroy();
+    }
+
+    @Override
+    public void setupUi() {
+
+    }
+
+    private void launchLoginActivity() {
+        Intent intentLoginActivity = LoginActivity.getStartIntent(this);
+        intentLoginActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intentLoginActivity);
+        finish();
+    }
+
+    private void launchMainActivity() {
+        Intent intentMainActivity = MainActivity.getStartIntent(this);
+        intentMainActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intentMainActivity);
+        finish();
     }
 }

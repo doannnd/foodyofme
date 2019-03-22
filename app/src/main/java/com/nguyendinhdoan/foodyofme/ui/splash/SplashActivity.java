@@ -14,7 +14,6 @@ import com.nguyendinhdoan.foodyofme.ui.base.BaseActivity;
 import com.nguyendinhdoan.foodyofme.ui.login.LoginActivity;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class SplashActivity extends BaseActivity implements SplashToView{
 
@@ -28,8 +27,6 @@ public class SplashActivity extends BaseActivity implements SplashToView{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
 
-        setUnbinder( ButterKnife.bind(this));
-        getActivityComponent().inject(this);
         setupUi();
     }
 
@@ -61,5 +58,10 @@ public class SplashActivity extends BaseActivity implements SplashToView{
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }

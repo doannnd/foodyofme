@@ -3,7 +3,7 @@
 
     <!-- content description image -->
     <string name="cdi_logo">logo</string>
-    
+
     <!-- label text view -->
     <string name="label_version_name">Version %1$s</string>
     <string name="label_loading">Loading…</string>
@@ -29,7 +29,7 @@
     <string name="error_empty_email">Email is empty</string>
     <string name="error_empty_password">Password id empty</string>
     <string name="error_confirm_password">Password doesn\'t confirm password</string>
-    
+
     <!--dialog-->
     <string name="dialog_title">Notification</string>
     <string name="dialog_ok">OK</string>
@@ -45,7 +45,14 @@
     <string name="menu_category">Category</string>
     <string name="menu_city">HCM City</string>
     <string name="menu_add">Add</string>
-    
+    <string name="menu_nearby">Nearby</string>
+    <string name="menu_order_delivery">Order Delivery</string>
+    <string name="menu_game_fun">Game &amp; Fun</string>
+    <string name="menu_reviews">Reviews</string>
+    <string name="menu_blog">Blogs</string>
+    <string name="menu_top_members">Top members</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

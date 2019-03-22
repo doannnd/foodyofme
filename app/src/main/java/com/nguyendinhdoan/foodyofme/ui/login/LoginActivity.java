@@ -1,23 +1,19 @@
 package com.nguyendinhdoan.foodyofme.ui.login;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.nguyendinhdoan.foodyofme.R;
 import com.nguyendinhdoan.foodyofme.ui.base.BaseActivity;
 import com.nguyendinhdoan.foodyofme.ui.main.MainActivity;
 import com.nguyendinhdoan.foodyofme.ui.register.RegisterActivity;
-import com.nguyendinhdoan.foodyofme.ui.splash.SplashActivity;
 import com.wang.avi.AVLoadingIndicatorView;
 
 import java.util.Objects;
@@ -41,8 +37,7 @@ public class LoginActivity extends BaseActivity implements LoginToView {
     @BindView(R.id.avl_loading)
     AVLoadingIndicatorView avlLoading;
 
-    @Inject
-    LoginPresenter loginPresenter;
+    LoginToPresenter<LoginToView> loginPresenter;
 
     public static Intent getStartIntent(Context context) {
         return new Intent(context, LoginActivity.class);
@@ -53,20 +48,15 @@ public class LoginActivity extends BaseActivity implements LoginToView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        getActivityComponent().inject(this);
         setUnbinder(ButterKnife.bind(this));
-        loginPresenter.attachView(this);
+        loginPresenter.onAttach(this);
+        loginPresenter = new LoginPresenter<>();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        //loginPresenter.isLoggedIn();
-    }
-
-    @Override
-    public void setupUi() {
-
+        loginPresenter.isLoggedIn();
     }
 
     @OnClick(R.id.btn_login)
@@ -101,8 +91,13 @@ public class LoginActivity extends BaseActivity implements LoginToView {
 
     @Override
     protected void onDestroy() {
-        loginPresenter.detachView();
+        loginPresenter.onDetach();
         super.onDestroy();
+    }
+
+    @Override
+    public void setupUi() {
+
     }
 
     @Override
@@ -137,5 +132,12 @@ public class LoginActivity extends BaseActivity implements LoginToView {
         if (isLoggedIn) {
             launchMainActivity();
         }
+    }
+
+    private void launchMainActivity() {
+        Intent intentMainActivity = MainActivity.getStartIntent(this);
+        intentMainActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intentMainActivity);
+        finish();
     }
 }
